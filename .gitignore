@@ -1,0 +1,6 @@
+# vim temporary files
+*.sw[op]
+
+# coverage files
+.coverage
+.coveragerc
