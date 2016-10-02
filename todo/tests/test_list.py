@@ -43,7 +43,17 @@ class TestList:
         expected = set([i.id_ for i in [self.task1, self.task2, task3]])
         assert_equal(result, expected)
 
-        # add multiple tasks at once
+    def test_add_multiple_tasks(self):
+        """Adding multiple tasks at once should be supported."""
+        new_list = List()
+        new_list.add(tasks=[self.task1, self.task2])
+        result = len(new_list)
+        expected = 2
+        assert_equal(result, expected)
+
+        result = set([t.id_ for t in new_list.tasks.values()])
+        expected = set([t.id_ for t in [self.task1, self.task2]])
+        assert_equal(result, expected)
 
     def test_remove_task(self):
         # check current length
@@ -63,4 +73,14 @@ class TestList:
         expected = set([self.task1.id_])
         assert_equal(result, expected)
 
-        # remove multiple items at once
+    def test_remove_multiple_tasks(self):
+        new_list = List()
+        new_list.add(tasks=[self.task1, self.task2])
+        new_list.remove(ids=[self.task1.id_, self.task2.id_])
+        result = len(new_list)
+        expected = 0
+        assert_equal(result, expected)
+
+        result = set([t.id_ for t in new_list.tasks.values()])
+        expected = set([])
+        assert_equal(result, expected)

@@ -4,12 +4,16 @@ import uuid
 class List(object):
     """A list."""
 
+    # NOTE: this class probably inherit from collections.abc.Sequence
+
     def __init__(self, tasks=None):
         self.id_ = uuid.uuid4()
         self.tasks = tasks
 
     @property
     def tasks(self):
+        # TODO: would it be better to return the values of the dictionary
+        # instead and have an additional method to return the ids?
         return self.__tasks
 
     @tasks.setter
