@@ -15,15 +15,17 @@ class TestList:
                            deadline=self.tomorrow)
 
     def test_empty_list(self):
-        """The supported ways of creating empty lists is without passing any
-        argument when constructing the list, or passing either an empty list
-        or a None object.
+        """An empty list can be created:
+        - Not passing any argument when constructing the list.
+        - Passing an empty list.
+        - Passing a None object.
         """
         mylist = List(tasks=[])
         mylist2 = List(tasks=None)
         mylist3 = List()
 
     def test_add_task(self):
+        """A task can be added to an existing live using the *add* method."""
         # check current length
         hit_list = List(tasks=[self.task1, self.task2])
         result = len(hit_list)
@@ -44,7 +46,9 @@ class TestList:
         assert_equal(result, expected)
 
     def test_add_multiple_tasks(self):
-        """Adding multiple tasks at once should be supported."""
+        """Multiple tasks can be added to an existig passing a list of *Task*s
+        to the *add* method.
+        """
         new_list = List()
         new_list.add(tasks=[self.task1, self.task2])
         result = len(new_list)
@@ -56,6 +60,7 @@ class TestList:
         assert_equal(result, expected)
 
     def test_remove_task(self):
+        """A task can be removed from a list using the *remove* method."""
         # check current length
         hit_list = List(tasks=[self.task1, self.task2])
         result = len(hit_list)
@@ -74,6 +79,9 @@ class TestList:
         assert_equal(result, expected)
 
     def test_remove_multiple_tasks(self):
+        """Multiple tasks can be removed from an existing list proving a list
+        of ids to the *remove* method.
+        """
         new_list = List()
         new_list.add(tasks=[self.task1, self.task2])
         new_list.remove(ids=[self.task1.id_, self.task2.id_])
