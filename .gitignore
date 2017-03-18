@@ -1,5 +1,5 @@
-# vim temporary files
-*.sw[op]
+# pytest cache
+.cache
 
 # coverage files
 .coverage

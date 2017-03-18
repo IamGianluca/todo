@@ -1,91 +1,66 @@
 import datetime
-from nose.tools import assert_equal, raises
-from unittest.mock import MagicMock
+
+import pytest
 
 from todo.task import Task
 
 
 class TestTask:
-    """Test suite for Task class."""
+    """Automated tests for Task class."""
 
-    def setUp(self):
-        self.today = datetime.datetime.today() + datetime.timedelta(minutes=30)
-        self.tomorrow = self.today + datetime.timedelta(days=1)
-        self.in7days = self.today + datetime.timedelta(days=7)
-        self.yesterday = self.today - datetime.timedelta(days=1)
-        self.task = Task(body="Service bike", deadline=self.tomorrow)
-
-    @raises(TypeError)
-    def test_missing_body(self):
+    def test_missing_body(self, tomorrow):
         """A body must be provided when creating a new task."""
-        Task(deadline=self.tomorrow)
+        with pytest.raises(TypeError):
+            Task(deadline=tomorrow)
 
     def test_missing_deadline(self):
         """Missing deadline should be a supported feature."""
         task = Task(body="Do homeworks")
-        result = task.deadline
-        expected = None
-        assert_equal(expected, result)
+        assert task.deadline == None
 
-    def test_datetime_format(self):
+    def test_datetime_format(self, task1):
         """Deadline should be formatted as a datetime.datetime object."""
-        isinstance(self.task.deadline, datetime.datetime)
+        assert isinstance(task1.deadline, datetime.datetime)
 
-    def test_changing_deadline(self):
+    def test_changing_deadline(self, task1, in7days):
         """Change deadline should be supported."""
-        self.task.deadline = self.in7days
-        expected = self.in7days
-        assert_equal(self.task.deadline, expected)
+        task1.deadline = in7days
+        assert task1.deadline == in7days
 
-    def test_postpone_deadline(self):
+    def test_postpone_deadline(self, task1, tomorrow, in7days):
         """Each time the deadline is changed a counter should be increased."""
         # starts counter at 0
-        new_task = Task(body="Food shopping", deadline=self.tomorrow)
-        result = new_task._postponed
-        expected = 0
-        assert_equal(result, expected)
+        assert task1._postponed == 0
 
         # increment by 1 each time the deadline is changed
-        new_task.deadline = self.in7days
-        result = new_task._postponed
-        expected = 1
-        assert_equal(result, expected)
+        task1.deadline = in7days
+        assert task1._postponed == 1
 
         # change body shouldn't increment counter
-        new_task.body = "Buy some breakfast"
-        result = new_task._postponed
-        expected = 1
-        assert_equal(result, expected)
+        task1.body = "Buy some breakfast"
+        assert task1._postponed == 1
 
         # if passed deadline is same as current one, counter shouldn't
         # increment
-        new_task.deadline = self.in7days
-        result = new_task._postponed
-        expected = 1
-        assert_equal(result, expected)
+        task1.deadline = in7days
+        assert task1._postponed == 1
 
         # if new deadline is before existing one, counter shouldn't increase
-        new_task.deadline = self.tomorrow
-        result = new_task._postponed
-        expected = 1
-        assert_equal(result, expected)
+        task1.deadline = tomorrow
+        assert task1._postponed == 1
 
-    def test_anticipate_deadline(self):
+    def test_anticipate_deadline(self, task1, today):
         """Anticipating the deadline is allowed but that shouldn't trigger the
         counter for postponed events either.
         """
-        new_task = Task(body="Buy flowers for mum's birthday",
-                        deadline=self.tomorrow)
-        new_task.deadline = self.today
+        task1.deadline = today
 
         # assert postponed events counter didn't go off
-        result = new_task._postponed
-        expected = 0
-        assert_equal(result, expected)
+        assert task1._postponed == 0
 
-    @raises(ValueError)
-    def test_anticipate_deadline_yesterday(self):
+    def test_anticipate_deadline_yesterday(self, task1, yesterday):
         """When trying to set a new deadline that is earlier the current date
         a ValueError should be retrieved.
         """
-        self.task.deadline = self.yesterday
+        with pytest.raises(ValueError):
+            task1.deadline = yesterday
