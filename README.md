@@ -1,5 +1,5 @@
-# todo - A TODO lists manager that moves tasks from one list to the other basedon recency
+# `todo` - A smarter way to organise your to-do lists
 
-*todo* is a tool that lets you manage your TODO lists and sync them with popular apps like Evernote. *todo* provides a command line interface (CLI) which you can use to add, remove and update events in your list. These events will then be synched with a SQLite3 database locally and then in Evernote. *todo* also regularly checks for updates on the apps you synched (for instance you might have had ticked a box next to an item) and updates the same item in your local database in order to maintain your items up-to-date on all interfaces. 
+`todo` is a tool that allows you to easily manage your to-do lists. At the current stage `todo` provides a command line interface (CLI) from which you can add, remove and update tasks in your to-do list.
 
-*todo* aims to be your only TODO lists manager and offers you the flexibility of using some of the most popular tools out there to communicate with it, when you can't access the CLI.
+`todo` aims to simplify the maintainance of your to-do lists, encapsulating the logic behind moving a task from a list to the other, based on the proximity of the deadline. For instance, you could organise your lists into High Impact Tasks (HIT), Master and Backlog, and assign rules based on the deadline proximity to move around tasks among the lists.
