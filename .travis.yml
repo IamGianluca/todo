@@ -1,10 +1,28 @@
+sudo: required
+
 language: python
 
 python:
   - '3.5'
   - '3.6'
 
-install: 'pip install -r requirements.txt'
+services:
+  - docker
 
-# command to run tests
-script: pytest
+env:
+  DOCKER_ENGINE_VERSION: 1.13.1-0~ubuntu-trusty
+  DOCKER_COMPOSE_VERSION: 1.12.0
+
+before_install:
+  # upgrade docker-engine to specific version 
+  - sudo apt-get update
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_ENGINE_VERSION}
+
+  # reinstall docker-compose at specific version
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+script:
+  - make run_tests
