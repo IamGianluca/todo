@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  tests:
+    build:
+      context: ../
+      dockerfile: docker/tests.Dockerfile
+    ports:
+      - "80:8000"
+    depends_on:
+      - db
+    ports:
+      - "80:8000"
+    networks:
+      - todo_backend
+
+  db:
+    image: postgres:9.5
+    #restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_USER: docker
+      POSTGRES_DB: testdb
+    ports:
+      - "5432"
+    networks:
+      - todo_backend
+
+
+networks:
+  todo_backend:
+    driver: bridge
