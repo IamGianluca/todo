@@ -12,8 +12,8 @@ WORKDIR /todo
 
 RUN pip install -r requirements.txt
 
-COPY . /todo 
+COPY . /todo
 
 EXPOSE 80
 
-CMD ["wait-for-it.sh", "db:5432", "--", "pytest"]
+CMD ["wait-for-it.sh", "db:5432", "--", "pytest", "-s", "--cov=todo"]
