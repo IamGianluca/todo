@@ -4,9 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.schema import UniqueConstraint
 
-# engine = create_engine('sqlite:///tmp/test.db')
 Base = declarative_base()
-# sqlite_session = sessionmaker(bind=engine)
 
 
 class User(Base):
@@ -45,7 +43,7 @@ class State(Base):
     __table_args__ = (UniqueConstraint('board_id', 'name'), )
 
     def __repr__(self):
-        return '<State(name={}, board={})>'.format(self.name, self.board)
+        return '<State(name={}, board={})>'.format(self.name, self.board.name)
 
 
 class Task(Base):
