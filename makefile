@@ -1,23 +1,22 @@
 build:
-	docker build --tag todo:latest --file ./docker/tests.Dockerfile .
+	docker build --tag todo:latest --file ./docker/app.Dockerfile .
 
 run:
 	cd docker && \
 	docker-compose build && \
-	docker-compose up tests
+	docker-compose up app
 
 test:
 	cd docker && \
 	docker-compose build && \
-	docker-compose up tests
+	docker-compose up tests && \
+	docker-compose down
 
 test_debugging_mode:
-	# to debug using pdb/ipdb go in the docker-compose.yml file and uncomment
-	# the stdin and tty lines in the *tests* service
 	cd docker && \
 	docker-compose build && \
-	docker-compose up -d tests
+	docker-compose run tests wait-for-it.sh app:5000 -- pytest -s
 
 docker_cleanup:
 	cd docker && \
-	docker-compose down --volumes 
+	docker-compose down --volumes
