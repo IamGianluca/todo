@@ -12,7 +12,6 @@ TESTDB = 'testdb'
 TESTDB_PATH = os.path.join('5432', TESTDB)
 TESTDB_URI = 'postgresql://docker:changeme@db:' + TESTDB_PATH
 
-# TESTDB_URI = 'postgresql://docker:changeme@db:5432/testdb' #+ TESTDB_PATH
 
 @pytest.fixture(scope='function')
 def today():
