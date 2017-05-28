@@ -1,5 +1,7 @@
 from flask import Blueprint
-from flask import abort, make_response, jsonify
+from flask import abort, current_app, g, make_response, jsonify
+
+from todo.models import Task
 
 
 todo = Blueprint('todo', __name__)
@@ -17,12 +19,11 @@ def check_health():
 
 @todo.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
+    """Retrieve all tasks."""
     return jsonify({'task': 1})
 
 
-@todo.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
+@todo.route('/todo/api/v1.0/tasks/<task_id>', methods=['GET'])
 def get_task(task_id):
-    task = [task for task in tasks if task['id'] == task_id]
-    if len(task) == 0:
-        abort(404)
-    return jsonify({'task': task[0]})
+    tasks = Task.query.all()
+    return jsonify(json_list=[todo.as_dict() for todo in tasks])

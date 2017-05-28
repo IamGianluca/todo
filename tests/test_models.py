@@ -2,15 +2,12 @@ import datetime
 import os
 
 import pytest
-from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
 
-from todo.models import Base, Board, State, Task, User
+from todo.models import Board, State, Task, User
 
 
-class TestDatabaseRelationship:
+class TestDatabaseRelationships:
 
     def test_add(self, session, task):
         """The ORM object and the one retrieved from the database, after
@@ -19,8 +16,7 @@ class TestDatabaseRelationship:
         """
         session.add(task)
         session.commit()
-        db_task = session.query(Task).filter_by(
-            description='service road bike').first()
+        db_task = Task.query.filter_by(description='service road bike').first()
         assert db_task is task
 
     def test_add2(self, session, task):
@@ -29,16 +25,14 @@ class TestDatabaseRelationship:
         """
         session.add(task)
         session.commit()
-        db_task = session.query(Task).filter_by(
-            description='service road bike').first()
+        db_task = Task.query.filter_by(description='service road bike').first()
         assert db_task is task
 
     def test_empty_db(self, session):
         """The databases shouldn't include any record since in the *session*
         fixture's finalizer all tables are dropped.
         """
-        result = session.query(Task).filter_by(
-            description='service road bike').all()
+        result = Task.query.filter_by(description='service road bike').all()
         assert result == []
 
     def test_assign_author_to_task(self, session, task, user):
@@ -52,8 +46,7 @@ class TestDatabaseRelationship:
         session.commit()
 
         # when
-        db_task = session.query(Task).filter_by(
-            description='service road bike').first()
+        db_task = Task.query.filter_by(description='service road bike').first()
 
         # then
         assert db_task.author == user
@@ -83,7 +76,7 @@ class TestDatabaseRelationship:
         session.commit()
 
         # when
-        db_states = session.query(State).filter_by(name='master').all()
+        db_states = State.query.filter_by(name='master').all()
 
         # then
         assert len(db_states) == 2
@@ -101,7 +94,7 @@ class TestDatabaseRelationship:
         session.commit()
 
         # when
-        db_state = session.query(State).filter_by(name='hit').first()
+        db_state = State.query.filter_by(name='hit').first()
 
         # then
         assert db_state.author == user
@@ -118,13 +111,13 @@ class TestDatabaseRelationship:
         session.commit()
 
         # when
-        db_state = session.query(State).filter_by(name='hit').first()
+        db_state = State.query.filter_by(name='hit').first()
 
         # then
         assert task in db_state.tasks
 
     def test_remove_task_from_state(self, session, hit, task):
-        """If task is removed from a state, and then chances are made permanent
+        """If task is removed from a state, and then changes are made permanent
         in the database, the *State* object retrieved from the database
         shouldn't include the given task in the list of task belonding to that
         state.
@@ -136,40 +129,40 @@ class TestDatabaseRelationship:
 
         # when
         hit.tasks.remove(task)
-        session.add(hit)  # should this be automated?
+        session.add(hit)
+        session.commit()
 
         # then
-        result = session.query(State).filter_by(name='hit').first()
+        result = State.query.filter_by(name='hit').first()
         assert task not in result.tasks
 
-    def test_assigning_a_list_to_task_state(self, session, hit, master, task):
+    def test_assign_list_to_task_state(self, session, hit, master, task):
         """The *Task* *state* attribute shouldn't be assigned to a list."""
         with pytest.raises(AttributeError):
             task.state = [hit, master]
 
-    def test_assigning_multiple_states_to_task(self, session, hit, master,
-                                               task):
+    def test_assign_multiple_states_to_task(self, session, master, task):
         """A *Task* can't belong to more than one *State* at the same time. If
         a task is moved from one state to another, the previous state shouldn't
         hold any reference to that task.
         """
         # NOTE: in the *task* fixture, the default *State* is the hit list.
-        # given 
+        # given
         task.state = master
         session.add(task)
         session.commit()
 
         # when
-        db_hit = session.query(State).filter_by(name='hit').first()
-        db_master = session.query(State).filter_by(name='master').first()
+        db_hit = State.query.filter_by(name='hit').first()
+        db_master = State.query.filter_by(name='master').first()
 
         # then
         assert task not in db_hit.tasks
         assert task in db_master.tasks
 
     def test_move_task_to_another_state(self, session, hit, master, task):
-        """If a *Task* is re-assigned to a new *State*, the database and the Python
-        representation of the current environment should match.
+        """If a *Task* is re-assigned to a new *State*, the database and the
+        Python representation of the current environment should match.
         """
         # given
         hit.tasks.append(task)
@@ -184,8 +177,8 @@ class TestDatabaseRelationship:
         session.commit()
 
         # then
-        db_hit = session.query(State).filter_by(name='hit').first()
+        db_hit = State.query.filter_by(name='hit').first()
         assert task not in db_hit.tasks
 
-        db_master = session.query(State).filter_by(name='master').first()
+        db_master = State.query.filter_by(name='master').first()
         assert task in db_master.tasks

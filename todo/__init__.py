@@ -1,5 +1,1 @@
-__title__ = 'todo'
-__version__ = '0.0.1'
-__author__ = 'Gianluca Rossi'
-__licence__ = 'MIT'
-__copyright__ = 'Copyright 2016 Gianluca Rossi'
+
