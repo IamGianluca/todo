@@ -1,13 +1,15 @@
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Date, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.schema import UniqueConstraint
 
-Base = declarative_base()
+
+db = SQLAlchemy()
 
 
-class User(Base):
+class User(db.Model):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
@@ -20,7 +22,7 @@ class User(Base):
                                                       self.email)
 
 
-class Board(Base):
+class Board(db.Model):
     __tablename__ = 'board'
 
     id = Column(Integer, primary_key=True)
@@ -32,7 +34,7 @@ class Board(Base):
                 format(self.title, self.states)
 
 
-class State(Base):
+class State(db.Model):
     __tablename__ = 'state'
 
     id = Column(Integer, primary_key=True)
@@ -43,10 +45,10 @@ class State(Base):
     __table_args__ = (UniqueConstraint('board_id', 'name'), )
 
     def __repr__(self):
-        return '<State(name={}, board={})>'.format(self.name, self.board.name)
+        return '<State(name={}, board={})>'.format(self.name, self.board.title)
 
 
-class Task(Base):
+class Task(db.Model):
     __tablename__ = 'task'
 
     id = Column(Integer, primary_key=True)
@@ -56,6 +58,12 @@ class Task(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     assignee = relationship('User', back_populates='tasks')
     deadline = Column(Date)
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'description': self.description
+        }
 
     def __repr__(self):
         return '<Task(description={}, state={}, deadline={})>'.format(

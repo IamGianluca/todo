@@ -12,7 +12,7 @@ test:
 	docker-compose up tests && \
 	docker-compose down
 
-test_debugging_mode:
+test_interactive_mode:
 	cd docker && \
 	docker-compose build && \
 	docker-compose run tests wait-for-it.sh app:5000 -- pytest -s

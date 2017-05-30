@@ -6,6 +6,13 @@ services:
     build:
       context: ../
       dockerfile: docker/app.Dockerfile
+    environment:
+      DB_NAME: ${PSQL_DATABASE}
+      DB_USER: ${PSQL_USER}
+      DB_PASSWORD: ${PSQL_PASSWORD}
+      DB_PORT: ${PSQL_PORT}
+      API_HOST: ${API_HOST}
+      API_PORT: ${API_PORT}
     ports:
       - "5000:5000"
     depends_on:
@@ -17,6 +24,13 @@ services:
     build:
       context: ../
       dockerfile: docker/tests.Dockerfile
+    environment:
+      DB_NAME: ${PSQL_DATABASE}
+      DB_USER: ${PSQL_USER}
+      DB_PASSWORD: ${PSQL_PASSWORD}
+      DB_PORT: ${PSQL_PORT}
+      API_HOST: ${API_HOST}
+      API_PORT: ${API_PORT}
     ports:
       - "80:8000"
     depends_on:
@@ -31,7 +45,7 @@ services:
     environment:
       POSTGRES_PASSWORD: changeme
       POSTGRES_USER: docker
-      POSTGRES_DB: testdb
+      POSTGRES_DB: db
     ports:
       - "5432"
     networks:
